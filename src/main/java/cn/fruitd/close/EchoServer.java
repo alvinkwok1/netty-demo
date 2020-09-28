@@ -10,19 +10,17 @@
  * only in accordance with the terms of the license agreement you entered
  * into with fingard.
  */
-package cn.fruitd.protocol.echo;
+package cn.fruitd.close;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * EchoServer
@@ -41,10 +39,11 @@ public class EchoServer {
     }
 
     public void start() throws Exception{
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(2);
         try{
             ServerBootstrap b= new ServerBootstrap();
-            b.group(group).channel(NioServerSocketChannel.class)
+            b.group(bossGroup,workerGroup).channel(NioServerSocketChannel.class)
                 .localAddress(new InetSocketAddress(port))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
@@ -57,7 +56,8 @@ public class EchoServer {
             f.channel().closeFuture().sync();
 
         }finally {
-            group.shutdownGracefully().sync();
+            bossGroup.shutdownGracefully().sync();
+            workerGroup.shutdownGracefully().sync();
         }
     }
 }

@@ -10,7 +10,7 @@
  * only in accordance with the terms of the license agreement you entered
  * into with fingard.
  */
-package cn.fruitd.protocol.echo;
+package cn.fruitd.close;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,16 +26,27 @@ import io.netty.util.CharsetUtil;
  * @author guopeng
  */
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
+    public static String str;
+    static {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0;i<10000;i++) {
+            sb.append("1");
+        }
+        str= sb.toString();
+
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf in = (ByteBuf ) msg;
         System.out.println("Server received" + in.toString(CharsetUtil.UTF_8));
-        ctx.write(in);
+        ctx.writeAndFlush(str);
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("客户端主动关闭连接");
     }
 
     @Override

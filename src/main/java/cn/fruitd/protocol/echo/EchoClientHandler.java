@@ -1,5 +1,5 @@
 /*
- * @(#)EchoServer.java      1.0   2018年8月6日
+ * @(#)EchoClient.java      1.0   2018年8月6日
  *
  * Copyright (c) 2009 fingard System Engineering Co., Ltd.
  * All rights reserved.
@@ -14,28 +14,27 @@ package cn.fruitd.protocol.echo;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
 
-
 /**
- * EchoServer
+ * EchoClient
  *
  * @author guopeng
  */
-public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+@ChannelHandler.Sharable
+public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf in = (ByteBuf ) msg;
-        System.out.println("Server received" + in.toString(CharsetUtil.UTF_8));
-        ctx.write(in);
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+      //  ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
+        System.out.println("Client received" + byteBuf.toString(CharsetUtil.UTF_8));
     }
 
     @Override
