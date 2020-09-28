@@ -18,11 +18,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * EchoServer
@@ -54,7 +51,7 @@ public class EchoServer {
                 });
             ChannelFuture f = b.bind().sync();            //8
             System.out.println(EchoServer.class.getName() + " started and listen on " + f.channel().localAddress());
-            f.channel().closeFuture().sync();
+            f.channel().closeFuture();
 
         }finally {
             group.shutdownGracefully().sync();

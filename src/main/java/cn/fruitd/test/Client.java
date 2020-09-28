@@ -13,9 +13,12 @@
 package cn.fruitd.test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Client
@@ -25,15 +28,35 @@ import java.net.Socket;
 public class Client {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Socket socket = new Socket();
-        InetSocketAddress socketAddress = new InetSocketAddress("localhost",20000);
-        socket.connect(socketAddress);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Socket socket = new Socket();
+                        socket.setReuseAddress(true);
+                        InetSocketAddress socketAddress = new InetSocketAddress("10.60.45.84", 9000);
+                        socket.connect(socketAddress);
 
-        OutputStream os = socket.getOutputStream();
-        os.write(new byte[10]);
-
-        Thread.sleep(3000);
-        os.close();
-        socket.close();
+                        OutputStream os = socket.getOutputStream();
+                        os.write("test".getBytes());
+                        InputStream is = socket.getInputStream();
+                        while (is.available() > 0) {
+                            is.read();
+                        }
+                        os.close();
+                        is.close();
+                        socket.close();
+                        Thread.sleep(20);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        Executor pool = Executors.newCachedThreadPool();
+        for (int i=0;i<4;i++) {
+            pool.execute(r);
+        }
     }
 }
