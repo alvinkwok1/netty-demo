@@ -13,9 +13,7 @@
 package cn.fruitd.close;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -41,23 +39,28 @@ public class EchoServer {
     public void start() throws Exception{
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup(2);
-        try{
-            ServerBootstrap b= new ServerBootstrap();
-            b.group(bossGroup,workerGroup).channel(NioServerSocketChannel.class)
-                .localAddress(new InetSocketAddress(port))
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_RCVBUF, 128 * 1024)
+                .childOption(ChannelOption.SO_SNDBUF, 128 * 1024)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new EchoServerHandler());
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast(new EchoServerHandler());
+                        pipeline.addLast(new ReaderIdleStateHandler());
                     }
                 });
-            ChannelFuture f = b.bind().sync();            //8
-            System.out.println(EchoServer.class.getName() + " started and listen on " + f.channel().localAddress());
+            ChannelFuture f = b.bind(port).sync();
             f.channel().closeFuture().sync();
 
-        }finally {
-            bossGroup.shutdownGracefully().sync();
-            workerGroup.shutdownGracefully().sync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
         }
     }
 }
