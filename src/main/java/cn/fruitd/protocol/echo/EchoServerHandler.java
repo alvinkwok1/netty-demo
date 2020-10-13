@@ -16,12 +16,8 @@ import io.netty.util.ReferenceCountUtil;
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    try {
-      ctx.write(msg); // (1)
-      ctx.flush(); // (2)
-    }finally {
-      ReferenceCountUtil.release(msg);
-    }
+    ctx.write(msg); // (1)
+    ctx.flush(); // (2)
   }
 
   @Override
