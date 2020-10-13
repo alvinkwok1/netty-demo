@@ -1,5 +1,5 @@
 /*
- * @(#)EchoClient.java      1.0   2018年8月6日
+ * @(#)TimeClientHandler.java      1.0   2018年8月6日
  *
  * Copyright (c) 2009 fingard System Engineering Co., Ltd.
  * All rights reserved.
@@ -10,25 +10,31 @@
  * only in accordance with the terms of the license agreement you entered
  * into with fingard.
  */
-package cn.fruitd.close;
+package cn.fruitd.protocol.time;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
+
+import java.util.Date;
 
 /**
- * EchoClient
+ * TimeClientHandler
  *
  * @author guopeng
  */
-public class EchoClientHandler extends ChannelInboundHandlerAdapter {
+public class TimeClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println(msg.toString());
+        ByteBuf m = (ByteBuf) msg;
+        try {
+            long currentTimeMills = (m.readUnsignedInt() - 220898800l) * 1000L;
+            System.out.println(new Date(currentTimeMills));
+            ctx.close();
+        }finally {
+            ReferenceCountUtil.release(m);
+        }
     }
 
     @Override

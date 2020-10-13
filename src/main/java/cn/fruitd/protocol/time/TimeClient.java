@@ -1,5 +1,5 @@
 /*
- * @(#)EchoClient.java      1.0   2018年8月6日
+ * @(#)TimeClient.java      1.0   2018年8月6日
  *
  * Copyright (c) 2009 fingard System Engineering Co., Ltd.
  * All rights reserved.
@@ -10,51 +10,48 @@
  * only in accordance with the terms of the license agreement you entered
  * into with fingard.
  */
-package cn.fruitd.protocol.echo;
+package cn.fruitd.protocol.time;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.CharsetUtil;
-
-import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * EchoClient
+ * TimeClient
  *
  * @author guopeng
  */
-public class EchoClient {
+public class TimeClient {
     public static void main(String[] args) throws InterruptedException {
-        EventLoopGroup group = new NioEventLoopGroup();
+        String host = args[0];
+        int port = Integer.parseInt(args[1]);
 
+        EventLoopGroup worker = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
-            b.group(group)
+            b.group(worker)
                 .channel(NioSocketChannel.class)
-                .remoteAddress(new InetSocketAddress("localhost", 9000))
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new EchoClientHandler());
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new TimeClientHandler());
                     }
                 });
-            ChannelFuture f = b.connect().sync();
-            // 多线程发送数据
-            ExecutorService pool = Executors.newCachedThreadPool();
+
+            ChannelFuture f = b.connect(host, port).sync();
+
             f.channel().closeFuture().sync();
-
-
-
         } finally {
-            group.shutdownGracefully().sync();
+            worker.shutdownGracefully();
         }
+
+
     }
 }
