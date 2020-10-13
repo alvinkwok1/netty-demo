@@ -1,4 +1,4 @@
-package cn.fruitd.protocol.echo;
+package cn.fruitd.protocol.discard;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -13,13 +13,13 @@ import io.netty.util.ReferenceCountUtil;
  * @date 10/12/2020
  * @since v1.0.11
  */
-public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     try {
-      ctx.write(msg); // (1)
-      ctx.flush(); // (2)
-    }finally {
+      // 不做任何操作
+    } finally {
+      // 释放引用计数
       ReferenceCountUtil.release(msg);
     }
   }
