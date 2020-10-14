@@ -56,7 +56,7 @@ public class TimeServer {
     }
 
     public static void main(String[] args) throws Exception {
-        TimeServer timeServer = new TimeServer(8080);
+        TimeServer timeServer = new TimeServer(37);
         timeServer.run();
     }
 }
