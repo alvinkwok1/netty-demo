@@ -10,7 +10,7 @@
  * only in accordance with the terms of the license agreement you entered
  * into with fingard.
  */
-package cn.fruitd.protocol.time;
+package cn.alvinkwok.protocol.time;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

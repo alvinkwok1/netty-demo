@@ -1,4 +1,4 @@
-package cn.fruitd.protocol.discard;
+package cn.alvinkwok.protocol.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -18,11 +18,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @date 10/12/2020
  * @since v1.0.11
  */
-public class DiscardServer {
+public class EchoServer {
 
   private int port;
 
-  public DiscardServer(int port) {
+  public EchoServer(int port) {
     this.port = port;
   }
 
@@ -35,7 +35,7 @@ public class DiscardServer {
         .channel(NioServerSocketChannel.class)
         .childHandler(new ChannelInitializer<SocketChannel>() {
           protected void initChannel(SocketChannel ch) throws Exception {
-           ch.pipeline().addLast(new DiscardServerHandler());
+           ch.pipeline().addLast(new EchoServerHandler());
           }
         })
         // 设置等待队列大小
@@ -59,7 +59,7 @@ public class DiscardServer {
     if (args.length > 0) {
       port = Integer.valueOf(args[0]);
     }
-    DiscardServer discardServer = new DiscardServer(8080);
+    EchoServer discardServer = new EchoServer(8080);
     discardServer.run();
   }
 }

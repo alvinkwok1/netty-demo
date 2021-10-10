@@ -1,14 +1,10 @@
-package cn.fruitd.protocol.stream.problem;
+package cn.alvinkwok.protocol.stream.problem;
 
-import cn.fruitd.protocol.time.TimeClientHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
-import java.io.IOException;
 
 /**
  * <p>

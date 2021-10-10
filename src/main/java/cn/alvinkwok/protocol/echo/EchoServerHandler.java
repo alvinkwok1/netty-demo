@@ -1,4 +1,4 @@
-package cn.fruitd.protocol.echo;
+package cn.alvinkwok.protocol.echo;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

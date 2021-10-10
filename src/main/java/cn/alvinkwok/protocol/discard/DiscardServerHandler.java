@@ -1,4 +1,4 @@
-package cn.fruitd.protocol.discard;
+package cn.alvinkwok.protocol.discard;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

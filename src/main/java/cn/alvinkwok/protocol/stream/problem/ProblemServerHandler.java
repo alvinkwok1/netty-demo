@@ -1,4 +1,4 @@
-package cn.fruitd.protocol.stream.problem;
+package cn.alvinkwok.protocol.stream.problem;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
